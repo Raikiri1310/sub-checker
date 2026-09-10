@@ -4,3 +4,4 @@ __pycache__/
 *.audio.mp3
 *.transcript.srt
 *.aligned.json
+names_places_nouns.txt

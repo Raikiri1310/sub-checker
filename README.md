@@ -49,6 +49,40 @@ per episode on CPU with the default `medium` model; the model weights
 Use `--model large-v3` for higher accuracy at the cost of more runtime,
 or `--model small` for a faster/lower-accuracy pass.
 
+Before it starts, it prompts:
+
+```
+Names/places/proper nouns to help transcription (comma-separated, blank to skip):
+```
+
+Whisper is weak on names it has no prior exposure to (character
+nicknames, invented in-universe brands, place names) regardless of how
+clean the audio is — feeding it a comma-separated list here (e.g.
+`Kitahara, Kotegawa, Kebako, Palau`) biases the decoding toward the
+right spellings. Leave it blank and hit enter to skip. Pass
+`--names "..."` (or `--names ""` to skip) to avoid the interactive
+prompt entirely, e.g. for scripted runs.
+
+Whatever list you enter gets saved to `names_places_nouns.txt` in the
+output directory. The next run in that same directory pre-fills the
+prompt with it as `[Kitahara, Kotegawa, Kebako, Palau]` — hit enter to
+reuse it as-is, or type a new/edited list to replace it, so you're not
+retyping the full cast every episode of the same show.
+
+You can hand-edit `names_places_nouns.txt` directly — lines starting
+with `#` (and blank lines) are treated as comments and ignored when
+loading, so you can organize it, e.g.:
+
+```
+# Characters
+Kitahara, Kotegawa, Kebako
+# Places
+Palau, Guam, Okinawa
+```
+
+Comments are preserved across runs — a run's auto-save only replaces
+the actual names content, not your `#` lines.
+
 **3. Align the subtitle against the transcript:**
 
 ```bash
@@ -94,7 +128,7 @@ timestamp so you can jump to that point in the episode.
 cd sub-checker && python -m pytest -v
 ```
 
-34 tests, all pure unit tests (no ffmpeg/model calls) except that
+51 tests, all pure unit tests (no ffmpeg/model calls) except that
 `extract.py` was manually verified against a real anime file with
 embedded ASS softsubs during development, and `transcribe.py` against a
 real extracted audio file.
